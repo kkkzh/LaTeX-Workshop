@@ -99,7 +99,8 @@ export class Viewer {
             this.extension.logger.displayStatus('check', 'statusBar.foreground', `Cannot view file PDF file. File not found: ${pdfFile}`, 'warning')
             return
         }
-        const url = `http://127.0.0.1:${this.extension.server.port}/viewer.html?file=${this.encodePathWithPrefix(pdfFile)}`
+        // const url = `http://127.0.0.1:${this.extension.server.port}/viewer.html?file=${this.encodePathWithPrefix(pdfFile)}`
+        const url = `https://${this.extension.server.url}:${this.extension.server.port}/viewer.html?file=${this.encodePathWithPrefix(pdfFile)}`
         return url
     }
 

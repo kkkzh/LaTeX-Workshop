@@ -47,6 +47,7 @@ export class Server {
     private validOriginUri: vscode.Uri | undefined
     readonly serverStarted: Promise<void>
     private readonly eventEmitter = new EventEmitter()
+    url?: string
 
     constructor(extension: Extension) {
         this.extension = extension
@@ -83,12 +84,15 @@ export class Server {
     private initializeHttpServer() {
         const configuration = vscode.workspace.getConfiguration('latex-workshop')
         const viewerPort = configuration.get('viewer.pdf.internal.port') as number
-        this.httpServer.listen(viewerPort, '127.0.0.1', undefined, async () => {
+        const viewerURL = configuration.get('viewer.pdf.internal.url') as string
+        // this.httpServer.listen(viewerPort, '127.0.0.1', undefined, async () => {
+        this.httpServer.listen(viewerPort, viewerURL, undefined, async () => {
             const address = this.httpServer.address()
+            this.url = viewerURL
             if (address && typeof address !== 'string') {
                 this.address = address
                 this.extension.logger.addLogMessage(`[Server] Server successfully started: ${JSON.stringify(address)}`)
-                this.validOriginUri = await this.obtainValidOrigin(address.port)
+                this.validOriginUri = await this.obtainValidOrigin(address.port, viewerURL)
                 this.extension.logger.addLogMessage(`[Server] valdOrigin is ${this.validOrigin}`)
                 this.initializeWsServer()
                 this.eventEmitter.emit(ServerStartedEvent)
@@ -101,8 +105,9 @@ export class Server {
         })
     }
 
-    private async obtainValidOrigin(serverPort: number): Promise<vscode.Uri> {
-        const origUrl = `http://127.0.0.1:${serverPort}/`
+    private async obtainValidOrigin(serverPort: number, serverurl: string): Promise<vscode.Uri> {
+        // const origUrl = `http://127.0.0.1:${serverPort}/`
+        const origUrl = `https://${serverurl}:${serverPort}/`
         const uri = await vscode.env.asExternalUri(vscode.Uri.parse(origUrl, true))
         return uri
     }

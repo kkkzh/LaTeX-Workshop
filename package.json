@@ -1386,8 +1386,13 @@
         "latex-workshop.viewer.pdf.internal.port": {
           "scope": "window",
           "type": "number",
-          "default": "0",
+          "default": "8080",
           "markdownDescription": "Define the port to listen on for communicating with the internal viewer. The default value \"0\" means the port is chosen randomly by the application."
+        },
+        "latex-workshop.viewer.pdf.internal.url": {
+          "type": "string",
+          "default": "192.168.1.170",
+          "markdownDescription": "URL used for connecting to the internal viewer. \"%p\" is replaced by the listening port of the viewer."
         },
         "latex-workshop.view.pdf.internal.synctex.keybinding": {
           "scope": "window",
